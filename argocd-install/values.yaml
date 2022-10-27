@@ -378,7 +378,7 @@ argo:
       #   password: my-password
       #   username: my-username
       argo-repo:
-        url: https://github.com/kurtburak/argocd.git
+        url: https://github.com/romulofranca/argocd.git
         type: git
 
     # -- Annotations to be added to `configs.repositories` Secret
