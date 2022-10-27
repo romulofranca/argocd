@@ -2,95 +2,77 @@
 # @default -- `[]` (See [values.yaml])
 ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
 applications:
-  - name: argocd
+- name: argocd
+  namespace: argocd
+  destination:
     namespace: argocd
-    destination:
-      namespace: argocd
-      server: https://kubernetes.default.svc
-    project: argocd
-    source:
-      helm:
-        version: v3
-        valueFiles:
-        - values.yaml
-      path: argocd-install
-      repoURL: https://github.com/romulofranca/argocd.git
-      targetRevision: HEAD
-    syncPolicy:
-      syncOptions:
-      - CreateNamespace=true
-# - name: guestbook
-#   namespace: argocd
-#   additionalLabels: {}
-#   additionalAnnotations: {}
-#   finalizers:
-#   - resources-finalizer.argocd.argoproj.io
-#   project: guestbook
-#   source:
-#     repoURL: https://github.com/argoproj/argocd-example-apps.git
-#     targetRevision: HEAD
-#     path: guestbook
-#     directory:
-#       recurse: true
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: guestbook
-#   syncPolicy:
-#     automated:
-#       prune: false
-#       selfHeal: false
-#   ignoreDifferences:
-#   - group: apps
-#     kind: Deployment
-#     jsonPointers:
-#     - /spec/replicas
-#   info:
-#   - name: url
-#     value: https://argoproj.github.io/
+    server: https://kubernetes.default.svc
+  project: argocd
+  source:
+    helm:
+      version: v3
+      valueFiles:
+      - values.yaml
+    path: argocd-install
+    repoURL: https://github.com/romulofranca/argocd.git
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+- name: argocd-apps
+  namespace: argocd
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: argocd
+  source:
+    path: argocd-apps
+    repoURL: https://github.com/romulo/argocd.git
+    targetRevision: HEAD
+    directory:
+      recurse: true
+      jsonnet: {}
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+- name: argocd-appprojects
+  namespace: argocd
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: argocd
+  source:
+    path: argocd-appprojects
+    repoURL: https://github.com/romulo/argocd.git
+    targetRevision: HEAD
+    directory:
+      recurse: true
+      jsonnet: {}
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
 
 # -- Deploy Argo CD Projects within this helm release
 # @default -- `[]` (See [values.yaml])
 ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
-projects: []
-# - name: guestbook
-#   namespace: argocd
-#   additionalLabels: {}
-#   additionalAnnotations: {}
-#   finalizers:
-#   - resources-finalizer.argocd.argoproj.io
-#   description: Example Project
-#   sourceRepos:
-#   - '*'
-#   destinations:
-#   - namespace: guestbook
-#     server: https://kubernetes.default.svc
-#   clusterResourceWhitelist: []
-#   clusterResourceBlacklist: []
-#   namespaceResourceBlacklist:
-#   - group: ''
-#     kind: ResourceQuota
-#   - group: ''
-#     kind: LimitRange
-#   - group: ''
-#     kind: NetworkPolicy
-#     orphanedResources: {}
-#     roles: []
-#   namespaceResourceWhitelist:
-#   - group: 'apps'
-#     kind: Deployment
-#   - group: 'apps'
-#     kind: StatefulSet
-#   orphanedResources: {}
-#   roles: []
-#   syncWindows:
-#   - kind: allow
-#     schedule: '10 1 * * *'
-#     duration: 1h
-#     applications:
-#     - '*-prod'
-#     manualSync: true
-#   signatureKeys:
-#   - keyID: ABCDEF1234567890
+projects:
+- name: argocd
+  namespace: argocd
+  additionalLabels: {}
+  additionalAnnotations: {}
+  description: Argocd Project
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: argocd
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  orphanedResources:
+    warn: false
 
 # -- Deploy Argo CD ApplicationSets within this helm release
 # @default -- `[]` (See [values.yaml])
