@@ -377,8 +377,9 @@ argo:
       #   type: helm
       #   password: my-password
       #   username: my-username
-      # private-repo:
-      #   url: https://github.com/argoproj/private-repo
+      argo-repo:
+        url: https://github.com/kurtburak/argocd.git
+        type: git
 
     # -- Annotations to be added to `configs.repositories` Secret
     repositoriesAnnotations: {}
